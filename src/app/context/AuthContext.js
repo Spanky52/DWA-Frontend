@@ -19,6 +19,11 @@ export function AuthProvider({ children }) {
   const router = useRouter();
 
   const [user, setUser] = useState(null);
+  
+  useEffect(() => {
+    console.log("USER CAMBIÓ:", user);
+  }, [user])
+
   const [loading, setLoading] = useState(true);
 
   const fetchUser = async () => {
