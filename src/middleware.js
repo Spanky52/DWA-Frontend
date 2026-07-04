@@ -13,6 +13,10 @@ function decodeJwtPayload(token) {
 
 export function middleware(request) {
   const token = request.cookies.get("token")?.value;
+
+  console.log("TOKEN:", request.cookies.get("token"));
+  console.log("TOKEN VALUE:", token);
+
   const pathname = request.nextUrl.pathname;
 
   const isProtected = protectedRoutes.some((route) => pathname === route || pathname.startsWith(`${route}/`));
