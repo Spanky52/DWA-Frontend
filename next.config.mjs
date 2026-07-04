@@ -4,11 +4,10 @@ const nextConfig = {
     return [
       {
         source: '/api/:path*',
-        destination: 'https://dwa-backend-4xwq.onrender.com/:path*',
+        destination: 'https://dwa-backend-4xwq.onrender.com/api/:path*',
       },
     ];
   },
 };
 
 export default nextConfig;
-
