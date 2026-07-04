@@ -17,46 +17,43 @@ const buildUrl = (path) => `${API_URL}${path}`;
 
 export function AuthProvider({ children }) {
   const router = useRouter();
-  
+
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   
   const fetchUser = async () => {
     try {
       const response = await fetch(buildUrl("/api/auth/me"), {
-        credentials: "include",
-        cache: "no-store",
-        headers: {
-          Accept: "application/json",
-          "Cache-Control": "no-cache",
-          Pragma: "no-cache",
-        },
-      });
-      
-      console.log("STATUS:", response.status);
-      if (!response.ok) {
-        setUser(null);
-        return null;
-      }
-      
-      const data = await response.json();
-
-      console.log("DATA:", data);
-
-      setUser(data.user ?? null);
-
-      return data.user ?? null;
-
-    } catch (error) {
-      console.log(error);
-
+      credentials: "include",
+      cache: "no-store",
+      headers: {
+        Accept: "application/json",
+      },
+    });
+    console.log("STATUS:", response.status);
+    if (!response.ok) {
       setUser(null);
-
       return null;
-      
-    } finally {
-      setLoading(false);
-    }};
+    }
+    
+    const data = await response.json();
+    
+    console.log("DATA:", data);
+
+    setUser(data.user ?? null);
+
+    return data.user ?? null;
+  
+  } catch (error) {
+    
+    console.log(error);
+
+    setUser(null);
+
+    return null;
+  } finally {
+    setLoading(false);
+  }};
 
   const login = async (email, password) => {
     try {
