@@ -20,14 +20,8 @@ export default function LoginPage() {
   const [error, setError] = useState("");
   const [submitting, setSubmitting] = useState(false);
 
-  /*
-   * Si ya existe una sesión válida,
-   * redirigir automáticamente.
-   */
   useEffect(() => {
-    if (loading) return;
-
-    if (!user) return;
+    if (loading || !user) return;
 
     router.replace(
       user.role === "ADMIN"
@@ -49,18 +43,21 @@ export default function LoginPage() {
 
     if (!result.success) {
       setError(result.message);
+      setSubmitting(false);
+      return;
     }
 
-    setSubmitting(false);
+    router.replace(
+      result.user.role === "ADMIN"
+        ? "/admin"
+        : "/dashboard"
+    );
   };
 
   return (
     <AppShell isPublic>
-
       <main className="flex min-h-screen items-center justify-center bg-slate-950 px-6 py-10 text-slate-100">
-
         <div className="w-full max-w-md rounded-3xl border border-white/10 bg-slate-900/80 p-8 shadow-2xl">
-
           <p className="text-sm uppercase tracking-[0.3em] text-indigo-300">
             Sign in
           </p>
@@ -77,7 +74,6 @@ export default function LoginPage() {
             onSubmit={handleSubmit}
             className="mt-8 space-y-4"
           >
-
             <input
               type="email"
               placeholder="Email"
@@ -119,25 +115,19 @@ export default function LoginPage() {
                 ? "Signing in..."
                 : "Continue"}
             </button>
-
           </form>
 
           <p className="mt-6 text-center text-sm text-slate-400">
             New here?{" "}
-
             <Link
               href="/register"
               className="font-medium text-indigo-300"
             >
               Create account
             </Link>
-
           </p>
-
         </div>
-
       </main>
-
     </AppShell>
   );
 }

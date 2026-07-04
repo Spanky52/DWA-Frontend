@@ -20,40 +20,40 @@ export function AuthProvider({ children }) {
 
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
-  
+
   const fetchUser = async () => {
+    setLoading(true);
+
     try {
       const response = await fetch(buildUrl("/api/auth/me"), {
-      credentials: "include",
-      cache: "no-store",
-      headers: {
-        Accept: "application/json",
-      },
-    });
-    console.log("STATUS:", response.status);
-    if (!response.ok) {
+        credentials: "include",
+        cache: "no-store",
+        headers: {
+          Accept: "application/json",
+        },
+      });
+
+      if (!response.ok) {
+        setUser(null);
+        return null;
+      }
+
+      const data = await response.json();
+
+      setUser(data.user ?? null);
+
+      return data.user ?? null;
+    } catch {
       setUser(null);
       return null;
+    } finally {
+      setLoading(false);
     }
-    
-    const data = await response.json();
-    
-    console.log("DATA:", data);
+  };
 
-    setUser(data.user ?? null);
-
-    return data.user ?? null;
-  
-  } catch (error) {
-    
-    console.log(error);
-
-    setUser(null);
-
-    return null;
-  } finally {
-    setLoading(false);
-  }};
+  useEffect(() => {
+    fetchUser();
+  }, []);
 
   const login = async (email, password) => {
     try {
@@ -78,17 +78,15 @@ export function AuthProvider({ children }) {
         };
       }
 
-      /*
-       * Muy importante:
-       * Esperamos a que el navegador almacene la cookie
-       * y luego obtenemos nuevamente el usuario desde /me.
-       */
-
       const currentUser = await fetchUser();
 
       return {
-        success: true,
+        success: currentUser !== null,
         user: currentUser,
+        message:
+          currentUser === null
+            ? "Unable to restore session."
+            : undefined,
       };
     } catch {
       return {
@@ -121,8 +119,12 @@ export function AuthProvider({ children }) {
       const currentUser = await fetchUser();
 
       return {
-        success: true,
+        success: currentUser !== null,
         user: currentUser,
+        message:
+          currentUser === null
+            ? "Unable to restore session."
+            : undefined,
       };
     } catch {
       return {
